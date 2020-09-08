@@ -26,4 +26,41 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
     public PaymentRequestServiceImpl(PaymentRequestRepo paymentRequestRepo) {
         this.paymentRequestRepo = paymentRequestRepo;
     }
+
+
+    //{@inheritDoc}
+
+    @Override
+    public Long createPaymentRequest(PaymentRequest paymentRequest) {
+        paymentRequest.setTicketId(Objects.hash(paymentRequest.getClientId(),
+                paymentRequest.getRouteId(),
+                paymentRequest.getDepartureDateTime()));
+        if (paymentRequestRepo.getByTicketId(paymentRequest.getTicketId()).isPresent()) {
+            throw new RequestAlreadyExistException("Request Already Exist");
+        } else {
+            return paymentRequestRepo.save(paymentRequest).getId();
+        }
+    }
+
+
+    //{@inheritDoc}
+
+    @Override
+    public PaymentRequestStatus getPaymentRequestStatus(Long id) {
+        return paymentRequestRepo.findById(id)
+                .orElseThrow(() -> new NoSuchPaymentRequestException("Payment request with id {" + id + "} not found!"))
+                .getRequestStatus();
+    }
+
+
+    //{@inheritDoc}
+
+    @Override
+    public List<PaymentRequest> getPaymentRequestsByClientId(Long clientId) {
+        return StreamSupport.stream(paymentRequestRepo.findAll().spliterator(), false)
+                .filter(paymentRequest -> paymentRequest.getClientId().equals(clientId)
+                        && paymentRequest.getDepartureDateTime().isAfter(ZonedDateTime.now()))
+                .sorted(Comparator.comparing(PaymentRequest::getDepartureDateTime))
+                .collect(Collectors.toList());
+    }
 }
