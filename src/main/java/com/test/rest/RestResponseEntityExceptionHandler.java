@@ -44,4 +44,12 @@ class RestResponseEntityExceptionHandler {
         return new ErrorDTO(Objects.requireNonNull(exception.getBindingResult().getFieldError()).getDefaultMessage());
     }
 
+    @ResponseBody
+    @ExceptionHandler(value = Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorDTO handleGenericException(Exception exception) {
+        log.error("Unhandled error", exception);
+        return new ErrorDTO("Something went wrong!");
+    }
+
 }
