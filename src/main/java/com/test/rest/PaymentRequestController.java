@@ -38,4 +38,39 @@ public class PaymentRequestController {
         this.mapper = mapper;
     }
 
+
+    //Process and create payment request
+    //    @param paymentRequest payment request body
+    //@return id of created payment request
+
+    @PostMapping
+    @ResponseBody
+    @ResponseStatus(HttpStatus.CREATED)
+    public Long createPaymentRequest(@Valid @RequestBody PaymentRequestDTO paymentRequest) {
+        return paymentRequestService.createPaymentRequest(mapper.map(paymentRequest, PaymentRequest.class));
+    }
+
+    //Get the payment request status by provided ID
+    //@param id payment request ID
+    //@return status of payment request
+
+    @GetMapping("/{id}/status")
+    @ResponseBody
+    public PaymentRequestStatusDTO getPaymentReqestStatus(@PathVariable("id") Long id) {
+        return PaymentRequestStatusDTO.valueOf(paymentRequestService.getPaymentRequestStatus(id).name());
+    }
+
+
+    //Get payment requests by client I
+    //@param id client ID
+    //@return list of payment requests
+
+    @GetMapping
+    @ResponseBody
+    public List<PaymentRequestDTO> getPaymentRequestsByClientId(@RequestParam("clientId") Long id) {
+        return paymentRequestService.getPaymentRequestsByClientId(id)
+                .stream()
+                .map(pr -> mapper.map(pr, PaymentRequestDTO.class))
+                .collect(Collectors.toList());
+    }
 }
