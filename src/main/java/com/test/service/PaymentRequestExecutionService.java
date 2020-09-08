@@ -49,6 +49,7 @@ public class PaymentRequestExecutionService {
                             paymentRequest.setRequestStatus(
                                     restTemplate.getForObject("http://localhost:8080/payment-status-generator",
                                             PaymentRequestStatus.class));
+                            paymentRequestRepo.save(paymentRequest);
                         }));
     }
 }
