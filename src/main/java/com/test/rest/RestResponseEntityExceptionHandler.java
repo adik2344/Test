@@ -36,4 +36,12 @@ class RestResponseEntityExceptionHandler {
         return new ErrorDTO(exception.getMessage());
     }
 
+    @ResponseBody
+    @ExceptionHandler(value = MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorDTO handleInvalidDataException(MethodArgumentNotValidException exception) {
+        log.warn("Invalid request data", exception);
+        return new ErrorDTO(Objects.requireNonNull(exception.getBindingResult().getFieldError()).getDefaultMessage());
+    }
+
 }
