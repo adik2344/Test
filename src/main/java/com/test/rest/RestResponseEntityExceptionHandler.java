@@ -20,4 +20,12 @@ import java.util.Objects;
 @Slf4j
 class RestResponseEntityExceptionHandler {
 
+    @ResponseBody
+    @ExceptionHandler(value = NoSuchPaymentRequestException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorDTO handleNoSuchPaymentRequestException(RuntimeException exception) {
+        log.warn("No such payment request exception", exception);
+        return new ErrorDTO(exception.getMessage());
+    }
+
 }
