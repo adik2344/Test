@@ -28,4 +28,12 @@ class RestResponseEntityExceptionHandler {
         return new ErrorDTO(exception.getMessage());
     }
 
+    @ResponseBody
+    @ExceptionHandler(value = RequestAlreadyExistException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorDTO handleRequestAlreadyExist(RuntimeException exception) {
+        log.warn("Duplicated request was found", exception);
+        return new ErrorDTO(exception.getMessage());
+    }
+
 }
