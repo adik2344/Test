@@ -12,5 +12,14 @@ import org.springframework.web.client.RestTemplate;
 
 @Configuration
 public class AppConfig {
+  @Bean
+  RestTemplate restTemplate() {
+    return new RestTemplate();
+  }
 
+  @Bean("paymentRequestTaskExecutor")
+  public TaskExecutor getTaskExecutor(@Value("${task-executor.max-pool-size}") int maxPoolSize) {
+    ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
+    return threadPoolTaskExecutor;
+  }
 }
