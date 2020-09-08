@@ -47,7 +47,7 @@ public class PaymentRequestExecutionService {
                         taskExecutor.execute(() -> {
                             log.debug(Thread.currentThread().getName());
                             paymentRequest.setRequestStatus(
-                                    restTemplate.getForObject("http://localhost:/payment-status-generator",
+                                    restTemplate.getForObject("http://localhost:8080/payment-status-generator",
                                             PaymentRequestStatus.class));
                         }));
     }
