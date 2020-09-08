@@ -32,4 +32,23 @@ public class PaymentRequestExecutionService {
         this.taskExecutor = taskExecutor;
     }
 
+
+    //Retrieves payment requests from repository
+    // and process all not final statuses using
+    // configured tasks executor.
+
+    @Scheduled(fixedRate = 60_000)
+    public void execute() {
+        log.info("payment request execution started");
+        StreamSupport.stream(paymentRequestRepo.findAll().spliterator(), false)
+                .filter(request -> request.getRequestStatus() != PaymentRequestStatus.DONE
+                        && request.getRequestStatus() != PaymentRequestStatus.ERROR)
+                .forEach(paymentRequest ->
+                        taskExecutor.execute(() -> {
+                            log.debug(Thread.currentThread().getName());
+                            paymentRequest.setRequestStatus(
+                                    restTemplate.getForObject("http://localhost:/payment-status-generator",
+                                            PaymentRequestStatus.class));
+                        }));
+    }
 }
