@@ -20,6 +20,8 @@ public class AppConfig {
   @Bean("paymentRequestTaskExecutor")
   public TaskExecutor getTaskExecutor(@Value("${task-executor.max-pool-size}") int maxPoolSize) {
     ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
+    threadPoolTaskExecutor.setMaxPoolSize(maxPoolSize);
+    threadPoolTaskExecutor.setCorePoolSize(maxPoolSize);
     return threadPoolTaskExecutor;
   }
 }
